@@ -204,6 +204,12 @@ const TXT = {
 
 let lang='zh', att='', guests=1, fmode='all', allData=[];
 
+// Auto-detect language from URL parameter ?lang=es
+(function(){
+  const p = new URLSearchParams(window.location.search);
+  if(p.get('lang')==='es') lang='es';
+})();
+
 function g(id){return document.getElementById(id)}
 
 async function sbFetch(path, opts={}){
@@ -244,6 +250,9 @@ function setAtt(v){
 function chg(d){guests=Math.max(1,Math.min(10,guests+d));g('gval').textContent=guests;}
 function checkSubmit(){g('sbtn').disabled=!(g('fname').value.trim()&&att);}
 g('fname').addEventListener('input',checkSubmit);
+
+// Apply language on load
+window.addEventListener('DOMContentLoaded', function(){ setLang(lang); });
 
 async function doSubmit(){
   if(!g('fname').value.trim()||!att) return;
