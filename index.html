@@ -51,8 +51,7 @@ textarea{resize:vertical;min-height:64px;margin-bottom:0}
 @keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .atoggle{text-align:center;padding:14px 0 0;font-size:11px;color:#bbb;cursor:pointer;letter-spacing:.04em}
 .atoggle:hover{color:var(--red)}
-/* Admin */
-#adm{display:none;padding:24px 16px 56px;max-width:900px;margin:0 auto}
+#adm{display:none;padding:24px 16px 56px;max-width:960px;margin:0 auto}
 .atop{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:2px solid #1a1a1a;padding-bottom:16px;margin-bottom:20px}
 .ah{font-size:22px;font-weight:700;color:#1a1a1a}.ah span{color:var(--red)}
 .asub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-top:3px}
@@ -80,8 +79,8 @@ tr:hover td{background:#fdf9f9}
 .dbtn{background:none;border:1px solid rgba(204,0,0,0.2);color:rgba(204,0,0,0.4);font-size:11px;padding:3px 8px;cursor:pointer;font-family:inherit;transition:all .2s}
 .dbtn:hover{background:rgba(204,0,0,0.07);color:var(--red);border-color:var(--red)}
 .empty{text-align:center;padding:48px;color:var(--gray);font-style:italic}
-#toast{position:fixed;bottom:20px;right:20px;background:#1a1a1a;color:#e8a000;padding:11px 20px;font-size:12px;font-weight:500;border-radius:2px;display:none;z-index:9999;animation:si .3s ease}
-@keyframes si{from{transform:translateX(80px);opacity:0}to{transform:translateX(0);opacity:1}}
+#toast{position:fixed;bottom:20px;right:20px;background:#1a1a1a;color:#e8a000;padding:11px 20px;font-size:12px;font-weight:500;border-radius:2px;display:none;z-index:9999}
+.loading{text-align:center;padding:32px;color:var(--gray);font-size:13px}
 @media(max-width:480px){.row2{grid-template-columns:1fr}.atop{flex-direction:column}}
 </style>
 </head>
@@ -95,7 +94,6 @@ tr:hover td{background:#fdf9f9}
   </div>
 </div>
 
-<!-- GUEST -->
 <div id="guest">
   <div class="hero">
     <div id="htag" class="htag">回执确认</div>
@@ -106,14 +104,12 @@ tr:hover td{background:#fdf9f9}
       <div id="hvenue" class="chip">📍 JW Marriott Lima（4楼 San Martin厅）</div>
     </div>
   </div>
-
   <div class="wrap">
     <div id="success" class="success" style="display:none">
       <div class="oring">✓</div>
       <div id="oktitle" class="oh">感谢您的回复</div>
       <p id="oksub" class="op">我们已收到您的确认<br>期待与您相聚于利马</p>
     </div>
-
     <div id="fbody">
       <div id="ftitle" class="stitle">请填写出席回执</div>
       <div class="card">
@@ -155,13 +151,12 @@ tr:hover td{background:#fdf9f9}
   </div>
 </div>
 
-<!-- ADMIN -->
 <div id="adm">
   <div class="atop">
     <div><div class="ah">ICBC Perú <span>· Admin</span></div><div class="asub">Foro 25 Jun · JW Marriott Lima</div></div>
     <div class="bgrp">
       <button class="ibtn" onclick="exportCSV()">导出 CSV / Exportar</button>
-      <button class="gbtn" onclick="renderTable()">↻ 刷新</button>
+      <button class="gbtn" onclick="loadAdmin()">↻ 刷新</button>
       <button class="gbtn" onclick="showGuest()">← 返回 / Volver</button>
     </div>
   </div>
@@ -189,33 +184,36 @@ tr:hover td{background:#fdf9f9}
 <div id="toast"></div>
 
 <script>
-const KEY='icbc_peru_rsvp_v1';
-const TXT={
+const SUPABASE_URL = 'https://pkdmdpzdqivxwmukooiz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_gx29YQtMl3eM9yBY8dPXbA_QDqUaZLz';
+
+const TXT = {
   zh:{tag:"回执确认",title:"同筑中秘经贸新桥梁 共创金融互联新机遇",sub:"主题论坛暨早餐会",
       date:"📅 6月25日（周四）上午8:15",venue:"📍 JW Marriott Lima（4楼 San Martin厅）",
-      ftitle:"请填写出席回执",
-      lname:"姓名",lco:"公司 / 单位",lpos:"职位",lemail:"电子邮件",lphone:"联系电话",latt:"出席情况",
-      byes:"✓ 欣然出席",bno:"✗ 敬谢不敏",
-      lguests:"随行人数（含本人）",ldiet:"饮食要求（如有）",lnote:"备注留言（选填）",
-      sbtn:"确认提交回执",
-      oktitle:"感谢您的回复",oksub:"我们已收到您的确认<br>期待与您相聚于利马",
+      ftitle:"请填写出席回执",lname:"姓名",lco:"公司 / 单位",lpos:"职位",lemail:"电子邮件",lphone:"联系电话",latt:"出席情况",
+      byes:"✓ 欣然出席",bno:"✗ 敬谢不敏",lguests:"随行人数（含本人）",ldiet:"饮食要求（如有）",lnote:"备注留言（选填）",
+      sbtn:"确认提交回执",oktitle:"感谢您的回复",oksub:"我们已收到您的确认<br>期待与您相聚于利马",
       phname:"请输入您的姓名",phco:"公司名称",phpos:"您的职位",phdiet:"如：素食、清真、过敏信息等",phnote:"其他需要说明的事项…"},
   es:{tag:"Confirmación de Asistencia",title:"Nuevos puentes para la cooperación económica y comercial China–Perú",sub:"Foro Temático y Desayuno Empresarial",
       date:"📅 Jueves 25 de junio, 8:00 a.m.",venue:"📍 JW Marriott Lima (Piso 4, Sala San Martin)",
-      ftitle:"Complete su confirmación de asistencia",
-      lname:"Nombre completo",lco:"Empresa / Institución",lpos:"Cargo",lemail:"Correo electrónico",lphone:"Teléfono de contacto",latt:"Confirmación de asistencia",
-      byes:"✓ Confirmo asistencia",bno:"✗ No podré asistir",
-      lguests:"Número de asistentes (incluyéndose)",ldiet:"Requerimientos alimentarios (si aplica)",lnote:"Comentarios adicionales (opcional)",
-      sbtn:"Confirmar asistencia",
-      oktitle:"¡Gracias por su respuesta!",oksub:"Hemos recibido su confirmación.<br>Esperamos verle en Lima.",
+      ftitle:"Complete su confirmación de asistencia",lname:"Nombre completo",lco:"Empresa / Institución",lpos:"Cargo",lemail:"Correo electrónico",lphone:"Teléfono de contacto",latt:"Confirmación de asistencia",
+      byes:"✓ Confirmo asistencia",bno:"✗ No podré asistir",lguests:"Número de asistentes (incluyéndose)",ldiet:"Requerimientos alimentarios (si aplica)",lnote:"Comentarios adicionales (opcional)",
+      sbtn:"Confirmar asistencia",oktitle:"¡Gracias por su respuesta!",oksub:"Hemos recibido su confirmación.<br>Esperamos verle en Lima.",
       phname:"Ingrese su nombre",phco:"Nombre de la empresa",phpos:"Su cargo",phdiet:"Ej: vegetariano, halal, alergias…",phnote:"Otro tipo de indicaciones…"}
 };
 
-let lang='zh',att='',guests=1,fmode='all',submitted=false;
+let lang='zh', att='', guests=1, fmode='all', allData=[];
 
 function g(id){return document.getElementById(id)}
-function loadData(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return[]}}
-function saveData(a){try{localStorage.setItem(KEY,JSON.stringify(a))}catch(e){}}
+
+async function sbFetch(path, opts={}){
+  const res = await fetch(SUPABASE_URL+'/rest/v1/'+path, {
+    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal',...(opts.headers||{})},
+    ...opts
+  });
+  if(opts.method==='POST') return res.ok;
+  return res.json();
+}
 
 function setLang(l){
   lang=l;
@@ -229,8 +227,7 @@ function setLang(l){
   g('lemail').textContent=t.lemail; g('lphone').textContent=t.lphone;
   g('latt').innerHTML=t.latt+' <span class="req">*</span>';
   g('byes').textContent=t.byes; g('bno').textContent=t.bno;
-  g('lguests').textContent=t.lguests;
-  g('ldiet').textContent=t.ldiet; g('lnote').textContent=t.lnote;
+  g('lguests').textContent=t.lguests; g('ldiet').textContent=t.ldiet; g('lnote').textContent=t.lnote;
   g('sbtn').textContent=t.sbtn;
   g('oktitle').textContent=t.oktitle; g('oksub').innerHTML=t.oksub;
   g('fname').placeholder=t.phname; g('fco').placeholder=t.phco; g('fpos').placeholder=t.phpos;
@@ -248,70 +245,85 @@ function chg(d){guests=Math.max(1,Math.min(10,guests+d));g('gval').textContent=g
 function checkSubmit(){g('sbtn').disabled=!(g('fname').value.trim()&&att);}
 g('fname').addEventListener('input',checkSubmit);
 
-function doSubmit(){
-  if(!g('fname').value.trim()||!att)return;
-  const entry={
-    id:Date.now().toString(),lang,
-    name:g('fname').value.trim(),company:g('fco').value.trim(),
-    position:g('fpos').value.trim(),email:g('femail').value.trim(),
-    phone:g('fphone').value.trim(),attendance:att,
+async function doSubmit(){
+  if(!g('fname').value.trim()||!att) return;
+  g('sbtn').disabled=true; g('sbtn').textContent='提交中…';
+  const row = {
+    lang, name:g('fname').value.trim(), company:g('fco').value.trim(),
+    position:g('fpos').value.trim(), email:g('femail').value.trim(),
+    phone:g('fphone').value.trim(), attendance:att,
     guests:att==='attend'?guests:0,
-    dietary:g('fdiet').value.trim(),note:g('fnote').value.trim(),
-    submittedAt:new Date().toLocaleString('zh-CN')
+    dietary:g('fdiet').value.trim(), note:g('fnote').value.trim()
   };
-  const all=loadData(); all.push(entry); saveData(all);
-  g('fbody').style.display='none'; g('success').style.display='block';
-  submitted=true;
+  const ok = await sbFetch('rsvp', {method:'POST', body:JSON.stringify(row)});
+  if(ok){
+    g('fbody').style.display='none'; g('success').style.display='block';
+  } else {
+    g('sbtn').disabled=false; g('sbtn').textContent=TXT[lang].sbtn;
+    showToast('提交失败，请重试 / Error, intente de nuevo');
+  }
 }
 
-function showAdmin(){g('guest').style.display='none';g('adm').style.display='block';renderTable();}
 function showGuest(){g('adm').style.display='none';g('guest').style.display='block';}
+function showAdmin(){g('guest').style.display='none';g('adm').style.display='block';loadAdmin();}
+
+async function loadAdmin(){
+  g('tbody').innerHTML='<tr><td colspan="9" class="empty">加载中… / Cargando…</td></tr>';
+  allData = await sbFetch('rsvp?select=*&order=created_at.desc');
+  renderTable();
+}
 
 function setFilter(f){
   fmode=f;
   ['fall','fatt','freg'].forEach(id=>g(id).classList.remove('on'));
-  g('f'+f==='all'?'all':f==='attend'?'att':'reg').classList.add('on');
+  g(f==='all'?'fall':f==='attend'?'fatt':'freg').classList.add('on');
   renderTable();
 }
 
 function renderTable(){
-  const all=loadData();
+  if(!Array.isArray(allData)){renderTableError();return;}
   const search=(g('sin').value||'').toLowerCase();
-  const rows=all.filter(r=>{
+  const rows=allData.filter(r=>{
     const mf=fmode==='all'||(fmode==='attend'&&r.attendance==='attend')||(fmode==='regret'&&r.attendance==='regret');
     const ms=!search||[r.name,r.company,r.position,r.email].some(v=>v&&v.toLowerCase().includes(search));
     return mf&&ms;
   });
-  const att=all.filter(r=>r.attendance==='attend');
+  const att=allData.filter(r=>r.attendance==='attend');
   const totalP=att.reduce((s,r)=>s+(parseInt(r.guests)||1),0);
-  g('stot').textContent=all.length; g('satt').textContent=att.length;
-  g('spers').textContent=totalP; g('sreg').textContent=all.filter(r=>r.attendance==='regret').length;
+  g('stot').textContent=allData.length; g('satt').textContent=att.length;
+  g('spers').textContent=totalP; g('sreg').textContent=allData.filter(r=>r.attendance==='regret').length;
   const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const ts=r=>r.created_at?new Date(r.created_at).toLocaleString('zh-CN'):'';
   g('tbody').innerHTML=rows.length?rows.map(r=>`
 <tr>
-  <td><strong>${esc(r.name)}</strong><br><span style="font-size:10px;color:#aaa">${r.lang==='zh'?'中文':'ES'}</span></td>
+  <td><strong>${esc(r.name)}</strong></td>
   <td><div>${esc(r.company||'—')}</div><div style="font-size:10px;color:#aaa">${esc(r.position||'')}</div></td>
   <td><div style="font-size:11px">${esc(r.email||'—')}</div><div style="font-size:10px;color:#aaa">${esc(r.phone||'')}</div></td>
   <td><span class="${r.attendance==='attend'?'by':'bn'}">${r.attendance==='attend'?'✓ Asiste':'✗ No asiste'}</span></td>
   <td style="text-align:center">${r.attendance==='attend'?r.guests:'—'}</td>
   <td style="font-size:11px;max-width:130px">${r.dietary?'🍽 '+esc(r.dietary)+'<br>':''}${r.note?'<span style="color:#aaa">💬 '+esc(r.note)+'</span>':''}${!r.dietary&&!r.note?'—':''}</td>
   <td style="font-size:10px;color:#aaa">${r.lang==='zh'?'中文':'ES'}</td>
-  <td style="font-size:10px;color:#aaa;white-space:nowrap">${r.submittedAt||''}</td>
-  <td><button class="dbtn" onclick="delEntry('${r.id}')">✕</button></td>
+  <td style="font-size:10px;color:#aaa;white-space:nowrap">${ts(r)}</td>
+  <td><button class="dbtn" onclick="delEntry(${r.id})">✕</button></td>
 </tr>`).join(''):'<tr><td colspan="9" class="empty">暂无回执 / No hay respuestas</td></tr>';
 }
 
-function delEntry(id){
-  const all=loadData().filter(r=>r.id!==id); saveData(all); renderTable();
+function renderTableError(){
+  g('tbody').innerHTML='<tr><td colspan="9" class="empty">加载失败，请刷新 / Error al cargar</td></tr>';
+}
+
+async function delEntry(id){
+  await sbFetch('rsvp?id=eq.'+id, {method:'DELETE'});
+  await loadAdmin();
   showToast('已删除 / Eliminado');
 }
 
 function exportCSV(){
-  const all=loadData();
+  if(!allData.length){showToast('暂无数据');return;}
   const h=['姓名/Nombre','公司/Empresa','职位/Cargo','邮箱/Email','电话/Teléfono','出席/Asistencia','人数/Personas','饮食/Dieta','备注/Notas','语言/Idioma','提交时间'];
-  const rows=all.map(r=>[r.name,r.company,r.position,r.email,r.phone,
+  const rows=allData.map(r=>[r.name,r.company,r.position,r.email,r.phone,
     r.attendance==='attend'?'出席/Asiste':'婉拒/No asiste',r.guests,r.dietary,r.note,
-    r.lang==='zh'?'中文':'Español',r.submittedAt]);
+    r.lang==='zh'?'中文':'Español',r.created_at?new Date(r.created_at).toLocaleString('zh-CN'):'']);
   const csv=[h,...rows].map(r=>r.map(c=>'"'+(c||'').toString().replace(/"/g,'""')+'"').join(',')).join('\n');
   const b=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
   const u=URL.createObjectURL(b);const a=document.createElement('a');
