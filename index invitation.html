@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICBC Perú — RSVP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f0f0;min-height:100vh}
+:root{--red:#cc0000;--dark:#1a1a1a;--gray:#666;--bd:#ddd}
+.lang-bar{background:#1a1a1a;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;position:sticky;top:0;z-index:100}
+.logo{color:#fff;font-size:13px;font-weight:700}.logo span{color:#e8a000}
+.lbtns{display:flex}
+.lbtn{padding:6px 18px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;letter-spacing:.1em;cursor:pointer;font-family:inherit;transition:all .2s}
+.lbtn+.lbtn{border-left:none}
+.lbtn.on{background:var(--red);border-color:var(--red);color:#fff}
+.hero{background:#1a1a1a;padding:32px 20px;text-align:center}
+.htag{display:inline-block;background:var(--red);color:#fff;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:4px 14px;margin-bottom:14px}
+.htitle{color:#fff;font-size:clamp(15px,3.5vw,21px);font-weight:700;line-height:1.45;margin-bottom:5px;max-width:500px;margin-left:auto;margin-right:auto}
+.hsub{color:rgba(255,255,255,0.45);font-size:13px;margin-bottom:18px}
+.chips{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);padding:7px 14px;color:rgba(255,255,255,0.8);font-size:11px}
+.wrap{max-width:540px;margin:0 auto;padding:24px 16px 56px}
+.stitle{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
+.card{background:#fff;border:1px solid var(--bd);padding:20px;margin-bottom:14px}
+.lbl{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:6px}
+.req{color:var(--red)}
+input,textarea{width:100%;border:1px solid var(--bd);padding:10px 13px;font-size:14px;font-family:inherit;color:#1a1a1a;outline:none;background:#fff;transition:border-color .2s;margin-bottom:12px;border-radius:0;-webkit-appearance:none}
+input:focus,textarea:focus{border-color:var(--red)}
+input:last-child{margin-bottom:0}
+textarea{resize:vertical;min-height:64px;margin-bottom:0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row2 input{margin-bottom:0}
+.attgrp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.abtn{padding:13px;border:2px solid var(--bd);background:#fff;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--gray);width:100%}
+.abtn.yes.on{border-color:var(--red);color:var(--red);background:#fff8f8}
+.abtn.no.on{border-color:#444;color:#222;background:#f8f8f8}
+.extra{margin-top:14px;padding-top:14px;border-top:1px solid #f0f0f0}
+.crow{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.crow label{font-size:13px;color:#1a1a1a;flex:1}
+.cbtn{width:32px;height:32px;border:1px solid var(--bd);background:#fff;font-size:20px;cursor:pointer;color:var(--gray);transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center;line-height:1}
+.cbtn:hover{border-color:var(--red);color:var(--red)}
+.cval{width:36px;text-align:center;font-size:16px;font-weight:600}
+.sbtn{width:100%;padding:15px;background:var(--red);border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;margin-top:6px;transition:opacity .2s}
+.sbtn:hover:not(:disabled){opacity:.87}
+.sbtn:disabled{opacity:.35;cursor:not-allowed}
+.success{text-align:center;padding:56px 20px;animation:fu .5s ease}
+.oring{width:60px;height:60px;border:2px solid var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px;color:var(--red)}
+.oh{font-size:22px;font-weight:700;color:#1a1a1a;margin-bottom:10px}
+.op{font-size:14px;color:var(--gray);line-height:1.8}
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.atoggle{text-align:center;padding:14px 0 0;font-size:11px;color:#bbb;cursor:pointer;letter-spacing:.04em}
+.atoggle:hover{color:var(--red)}
+/* Admin */
+#adm{display:none;padding:24px 16px 56px;max-width:900px;margin:0 auto}
+.atop{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:2px solid #1a1a1a;padding-bottom:16px;margin-bottom:20px}
+.ah{font-size:22px;font-weight:700;color:#1a1a1a}.ah span{color:var(--red)}
+.asub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-top:3px}
+.bgrp{display:flex;gap:8px;flex-wrap:wrap}
+.ibtn{padding:9px 18px;background:#1a1a1a;border:none;color:#e8a000;font-family:inherit;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.gbtn{padding:9px 14px;border:1px solid #ddd;background:#fff;font-family:inherit;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);cursor:pointer;transition:all .2s}
+.gbtn:hover{border-color:var(--red);color:var(--red)}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.sc{background:#fff;border:1px solid #ddd;border-left:3px solid var(--red);padding:12px 18px;min-width:88px}
+.sc.g{border-left-color:#27ae60}.sc.o{border-left-color:#e8a000}.sc.gr{border-left-color:#888}
+.sn{font-size:30px;font-weight:300;color:#1a1a1a;line-height:1}
+.sl{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-top:3px}
+.fbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+#sin{flex:1;min-width:140px;padding:9px 13px;border:1px solid #ddd;background:#fff;font-family:inherit;font-size:13px;color:#1a1a1a;outline:none}
+#sin:focus{border-color:var(--red)}
+.fb{padding:9px 14px;border:1px solid #ddd;background:#fff;font-family:inherit;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);cursor:pointer;transition:all .2s}
+.fb.on{background:#1a1a1a;color:#e8a000;border-color:#1a1a1a}
+.tw{overflow-x:auto;background:#fff;border:1px solid #ddd}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:9px 11px;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gray);border-bottom:2px solid #eee;white-space:nowrap;background:#fafafa}
+td{padding:11px;border-bottom:1px solid #f0f0f0;vertical-align:middle;color:#1a1a1a}
+tr:hover td{background:#fdf9f9}
+.by{display:inline-block;padding:2px 8px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:#e8f7ef;color:#1a7a3f;border:1px solid #9fdcb8}
+.bn{display:inline-block;padding:2px 8px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:#f5f5f5;color:#555;border:1px solid #ccc}
+.dbtn{background:none;border:1px solid rgba(204,0,0,0.2);color:rgba(204,0,0,0.4);font-size:11px;padding:3px 8px;cursor:pointer;font-family:inherit;transition:all .2s}
+.dbtn:hover{background:rgba(204,0,0,0.07);color:var(--red);border-color:var(--red)}
+.empty{text-align:center;padding:48px;color:var(--gray);font-style:italic}
+#toast{position:fixed;bottom:20px;right:20px;background:#1a1a1a;color:#e8a000;padding:11px 20px;font-size:12px;font-weight:500;border-radius:2px;display:none;z-index:9999;animation:si .3s ease}
+@keyframes si{from{transform:translateX(80px);opacity:0}to{transform:translateX(0);opacity:1}}
+@media(max-width:480px){.row2{grid-template-columns:1fr}.atop{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div class="lang-bar">
+  <div class="logo">ICBC <span>Perú</span></div>
+  <div class="lbtns">
+    <button class="lbtn on" onclick="setLang('zh')">中文</button>
+    <button class="lbtn" onclick="setLang('es')">Español</button>
+  </div>
+</div>
+
+<!-- GUEST -->
+<div id="guest">
+  <div class="hero">
+    <div id="htag" class="htag">回执确认</div>
+    <div id="htitle" class="htitle">同筑中秘经贸新桥梁 共创金融互联新机遇</div>
+    <div id="hsub" class="hsub">主题论坛暨早餐会</div>
+    <div class="chips">
+      <div id="hdate" class="chip">📅 6月25日（周四）上午8:15</div>
+      <div id="hvenue" class="chip">📍 JW Marriott Lima（4楼 San Martin厅）</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div id="success" class="success" style="display:none">
+      <div class="oring">✓</div>
+      <div id="oktitle" class="oh">感谢您的回复</div>
+      <p id="oksub" class="op">我们已收到您的确认<br>期待与您相聚于利马</p>
+    </div>
+
+    <div id="fbody">
+      <div id="ftitle" class="stitle">请填写出席回执</div>
+      <div class="card">
+        <label class="lbl" id="lname">姓名 <span class="req">*</span></label>
+        <input id="fname" placeholder="请输入您的姓名">
+        <div class="row2">
+          <div><label class="lbl" id="lco">公司 / 单位</label><input id="fco" placeholder="公司名称"></div>
+          <div><label class="lbl" id="lpos">职位</label><input id="fpos" placeholder="您的职位"></div>
+        </div>
+        <div class="row2" style="margin-top:0">
+          <div><label class="lbl" id="lemail">电子邮件</label><input id="femail" type="email" placeholder="email@ejemplo.com"></div>
+          <div><label class="lbl" id="lphone">联系电话</label><input id="fphone" placeholder="手机号码"></div>
+        </div>
+      </div>
+      <div class="card">
+        <label class="lbl" id="latt">出席情况 <span class="req">*</span></label>
+        <div class="attgrp">
+          <button class="abtn yes" id="byes" onclick="setAtt('attend')">✓ 欣然出席</button>
+          <button class="abtn no" id="bno" onclick="setAtt('regret')">✗ 敬谢不敏</button>
+        </div>
+        <div id="extra" class="extra" style="display:none">
+          <div class="crow">
+            <label id="lguests">随行人数（含本人）</label>
+            <button class="cbtn" onclick="chg(-1)">−</button>
+            <div class="cval" id="gval">1</div>
+            <button class="cbtn" onclick="chg(1)">+</button>
+          </div>
+          <label class="lbl" id="ldiet">饮食要求（如有）</label>
+          <input id="fdiet" placeholder="如：素食、清真、过敏信息等">
+        </div>
+      </div>
+      <div class="card">
+        <label class="lbl" id="lnote">备注留言（选填）</label>
+        <textarea id="fnote" placeholder="其他需要说明的事项…"></textarea>
+      </div>
+      <button class="sbtn" id="sbtn" onclick="doSubmit()" disabled>确认提交回执</button>
+    </div>
+    <div class="atoggle" onclick="showAdmin()">管理后台 / Panel de administración →</div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="adm">
+  <div class="atop">
+    <div><div class="ah">ICBC Perú <span>· Admin</span></div><div class="asub">Foro 25 Jun · JW Marriott Lima</div></div>
+    <div class="bgrp">
+      <button class="ibtn" onclick="exportCSV()">导出 CSV / Exportar</button>
+      <button class="gbtn" onclick="renderTable()">↻ 刷新</button>
+      <button class="gbtn" onclick="showGuest()">← 返回 / Volver</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="sc"><div class="sn" id="stot">0</div><div class="sl">Total</div></div>
+    <div class="sc g"><div class="sn" id="satt">0</div><div class="sl">出席 / Asisten</div></div>
+    <div class="sc o"><div class="sn" id="spers">0</div><div class="sl">到场人数 / Personas</div></div>
+    <div class="sc gr"><div class="sn" id="sreg">0</div><div class="sl">婉拒 / No asisten</div></div>
+  </div>
+  <div class="fbar">
+    <input id="sin" placeholder="搜索 / Buscar…" oninput="renderTable()">
+    <button class="fb on" id="fall" onclick="setFilter('all')">全部</button>
+    <button class="fb" id="fatt" onclick="setFilter('attend')">出席</button>
+    <button class="fb" id="freg" onclick="setFilter('regret')">婉拒</button>
+  </div>
+  <div class="tw">
+    <table><thead><tr>
+      <th>姓名/Nombre</th><th>公司/Empresa</th><th>联系/Contacto</th>
+      <th>出席/Asistencia</th><th>人数</th><th>饮食/备注</th><th>语言</th><th>时间</th><th></th>
+    </tr></thead>
+    <tbody id="tbody"></tbody></table>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const KEY='icbc_peru_rsvp_v1';
+const TXT={
+  zh:{tag:"回执确认",title:"同筑中秘经贸新桥梁 共创金融互联新机遇",sub:"主题论坛暨早餐会",
+      date:"📅 6月25日（周四）上午8:15",venue:"📍 JW Marriott Lima（4楼 San Martin厅）",
+      ftitle:"请填写出席回执",
+      lname:"姓名",lco:"公司 / 单位",lpos:"职位",lemail:"电子邮件",lphone:"联系电话",latt:"出席情况",
+      byes:"✓ 欣然出席",bno:"✗ 敬谢不敏",
+      lguests:"随行人数（含本人）",ldiet:"饮食要求（如有）",lnote:"备注留言（选填）",
+      sbtn:"确认提交回执",
+      oktitle:"感谢您的回复",oksub:"我们已收到您的确认<br>期待与您相聚于利马",
+      phname:"请输入您的姓名",phco:"公司名称",phpos:"您的职位",phdiet:"如：素食、清真、过敏信息等",phnote:"其他需要说明的事项…"},
+  es:{tag:"Confirmación de Asistencia",title:"Nuevos puentes para la cooperación económica y comercial China–Perú",sub:"Foro Temático y Desayuno Empresarial",
+      date:"📅 Jueves 25 de junio, 8:00 a.m.",venue:"📍 JW Marriott Lima (Piso 4, Sala San Martin)",
+      ftitle:"Complete su confirmación de asistencia",
+      lname:"Nombre completo",lco:"Empresa / Institución",lpos:"Cargo",lemail:"Correo electrónico",lphone:"Teléfono de contacto",latt:"Confirmación de asistencia",
+      byes:"✓ Confirmo asistencia",bno:"✗ No podré asistir",
+      lguests:"Número de asistentes (incluyéndose)",ldiet:"Requerimientos alimentarios (si aplica)",lnote:"Comentarios adicionales (opcional)",
+      sbtn:"Confirmar asistencia",
+      oktitle:"¡Gracias por su respuesta!",oksub:"Hemos recibido su confirmación.<br>Esperamos verle en Lima.",
+      phname:"Ingrese su nombre",phco:"Nombre de la empresa",phpos:"Su cargo",phdiet:"Ej: vegetariano, halal, alergias…",phnote:"Otro tipo de indicaciones…"}
+};
+
+let lang='zh',att='',guests=1,fmode='all',submitted=false;
+
+function g(id){return document.getElementById(id)}
+function loadData(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return[]}}
+function saveData(a){try{localStorage.setItem(KEY,JSON.stringify(a))}catch(e){}}
+
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lbtn').forEach((b,i)=>b.classList.toggle('on',(i===0&&l==='zh')||(i===1&&l==='es')));
+  const t=TXT[l];
+  g('htag').textContent=t.tag; g('htitle').textContent=t.title; g('hsub').textContent=t.sub;
+  g('hdate').textContent=t.date; g('hvenue').textContent=t.venue;
+  g('ftitle').textContent=t.ftitle;
+  g('lname').innerHTML=t.lname+' <span class="req">*</span>';
+  g('lco').textContent=t.lco; g('lpos').textContent=t.lpos;
+  g('lemail').textContent=t.lemail; g('lphone').textContent=t.lphone;
+  g('latt').innerHTML=t.latt+' <span class="req">*</span>';
+  g('byes').textContent=t.byes; g('bno').textContent=t.bno;
+  g('lguests').textContent=t.lguests;
+  g('ldiet').textContent=t.ldiet; g('lnote').textContent=t.lnote;
+  g('sbtn').textContent=t.sbtn;
+  g('oktitle').textContent=t.oktitle; g('oksub').innerHTML=t.oksub;
+  g('fname').placeholder=t.phname; g('fco').placeholder=t.phco; g('fpos').placeholder=t.phpos;
+  g('fdiet').placeholder=t.phdiet; g('fnote').placeholder=t.phnote;
+}
+
+function setAtt(v){
+  att=v;
+  g('byes').classList.toggle('on',v==='attend');
+  g('bno').classList.toggle('on',v==='regret');
+  g('extra').style.display=v==='attend'?'block':'none';
+  checkSubmit();
+}
+function chg(d){guests=Math.max(1,Math.min(10,guests+d));g('gval').textContent=guests;}
+function checkSubmit(){g('sbtn').disabled=!(g('fname').value.trim()&&att);}
+g('fname').addEventListener('input',checkSubmit);
+
+function doSubmit(){
+  if(!g('fname').value.trim()||!att)return;
+  const entry={
+    id:Date.now().toString(),lang,
+    name:g('fname').value.trim(),company:g('fco').value.trim(),
+    position:g('fpos').value.trim(),email:g('femail').value.trim(),
+    phone:g('fphone').value.trim(),attendance:att,
+    guests:att==='attend'?guests:0,
+    dietary:g('fdiet').value.trim(),note:g('fnote').value.trim(),
+    submittedAt:new Date().toLocaleString('zh-CN')
+  };
+  const all=loadData(); all.push(entry); saveData(all);
+  g('fbody').style.display='none'; g('success').style.display='block';
+  submitted=true;
+}
+
+function showAdmin(){g('guest').style.display='none';g('adm').style.display='block';renderTable();}
+function showGuest(){g('adm').style.display='none';g('guest').style.display='block';}
+
+function setFilter(f){
+  fmode=f;
+  ['fall','fatt','freg'].forEach(id=>g(id).classList.remove('on'));
+  g('f'+f==='all'?'all':f==='attend'?'att':'reg').classList.add('on');
+  renderTable();
+}
+
+function renderTable(){
+  const all=loadData();
+  const search=(g('sin').value||'').toLowerCase();
+  const rows=all.filter(r=>{
+    const mf=fmode==='all'||(fmode==='attend'&&r.attendance==='attend')||(fmode==='regret'&&r.attendance==='regret');
+    const ms=!search||[r.name,r.company,r.position,r.email].some(v=>v&&v.toLowerCase().includes(search));
+    return mf&&ms;
+  });
+  const att=all.filter(r=>r.attendance==='attend');
+  const totalP=att.reduce((s,r)=>s+(parseInt(r.guests)||1),0);
+  g('stot').textContent=all.length; g('satt').textContent=att.length;
+  g('spers').textContent=totalP; g('sreg').textContent=all.filter(r=>r.attendance==='regret').length;
+  const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  g('tbody').innerHTML=rows.length?rows.map(r=>`
+<tr>
+  <td><strong>${esc(r.name)}</strong><br><span style="font-size:10px;color:#aaa">${r.lang==='zh'?'中文':'ES'}</span></td>
+  <td><div>${esc(r.company||'—')}</div><div style="font-size:10px;color:#aaa">${esc(r.position||'')}</div></td>
+  <td><div style="font-size:11px">${esc(r.email||'—')}</div><div style="font-size:10px;color:#aaa">${esc(r.phone||'')}</div></td>
+  <td><span class="${r.attendance==='attend'?'by':'bn'}">${r.attendance==='attend'?'✓ Asiste':'✗ No asiste'}</span></td>
+  <td style="text-align:center">${r.attendance==='attend'?r.guests:'—'}</td>
+  <td style="font-size:11px;max-width:130px">${r.dietary?'🍽 '+esc(r.dietary)+'<br>':''}${r.note?'<span style="color:#aaa">💬 '+esc(r.note)+'</span>':''}${!r.dietary&&!r.note?'—':''}</td>
+  <td style="font-size:10px;color:#aaa">${r.lang==='zh'?'中文':'ES'}</td>
+  <td style="font-size:10px;color:#aaa;white-space:nowrap">${r.submittedAt||''}</td>
+  <td><button class="dbtn" onclick="delEntry('${r.id}')">✕</button></td>
+</tr>`).join(''):'<tr><td colspan="9" class="empty">暂无回执 / No hay respuestas</td></tr>';
+}
+
+function delEntry(id){
+  const all=loadData().filter(r=>r.id!==id); saveData(all); renderTable();
+  showToast('已删除 / Eliminado');
+}
+
+function exportCSV(){
+  const all=loadData();
+  const h=['姓名/Nombre','公司/Empresa','职位/Cargo','邮箱/Email','电话/Teléfono','出席/Asistencia','人数/Personas','饮食/Dieta','备注/Notas','语言/Idioma','提交时间'];
+  const rows=all.map(r=>[r.name,r.company,r.position,r.email,r.phone,
+    r.attendance==='attend'?'出席/Asiste':'婉拒/No asiste',r.guests,r.dietary,r.note,
+    r.lang==='zh'?'中文':'Español',r.submittedAt]);
+  const csv=[h,...rows].map(r=>r.map(c=>'"'+(c||'').toString().replace(/"/g,'""')+'"').join(',')).join('\n');
+  const b=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const u=URL.createObjectURL(b);const a=document.createElement('a');
+  a.href=u;a.download='ICBC_Peru_RSVP.csv';a.click();
+  showToast('CSV 已导出 / Exportado ✓');
+}
+
+let toastT=null;
+function showToast(m){
+  const el=g('toast');el.textContent=m;el.style.display='block';
+  if(toastT)clearTimeout(toastT);
+  toastT=setTimeout(()=>{el.style.display='none'},2500);
+}
+</script>
+</body>
+</html>
